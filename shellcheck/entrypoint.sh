@@ -33,11 +33,9 @@ parse_json() {
 }
 
 request() {
-  url="https://api.github.com/repos/$(jq --raw-output .repository.full_name "$GITHUB_EVENT_PATH")/check-runs"
-
-  if [ -n "$2" ]; then
+  if [ -n "$3" ]; then
     method='PATCH'
-    suffix="/$2"
+    suffix="/$3"
   else
     method='POST'
     suffix=''
@@ -51,8 +49,8 @@ request() {
     --header 'Accept: application/vnd.github.antiope-preview+json' \
     --header "Authorization: token ${GITHUB_TOKEN}" \
     --header 'Content-Type: application/json' \
-    --data "$1" \
-    "${url}${suffix}"
+    --data "$2" \
+    "${1}/check-runs${suffix}"
   set +x
 }
 
@@ -70,14 +68,18 @@ timestamp() {
 }
 
 main() {
-  >&2 echo "DEBUG: \$GITHUB_ACTION = $GITHUB_ACTION ; \$GITHUB_SHA = $GITHUB_SHA"
+  jq . "$GITHUB_EVENT_PATH"
+  exit 0
+
+  url="https://api.github.com/repos/$(jq --raw-output .repository.full_name "$GITHUB_EVENT_PATH")"
+  >&2 echo "DEBUG: \$GITHUB_ACTION = $GITHUB_ACTION ; \$GITHUB_SHA = $GITHUB_SHA ; \$url = $url"
 
   json='{"name":"'"${GITHUB_ACTION}"'","status":"in_progress","started_at":"'"$(timestamp)"'","head_sha":"'"${GITHUB_SHA}"'"}'
 
   >&2 echo "DEBUG: \$json => $json"
 
   # start check
-  response="$(request "$json")"
+  response="$(request "$url" "$json")"
   >&2 echo "DEBUG: \$response <> $response"
 
   >&2 echo "DEBUG: before id"
@@ -101,7 +103,7 @@ main() {
 
   json=$(parse_json "$results")
   >&2 echo "DEBUG: pre-patch json => $json"
-  response=$(request "$json" "$id")
+  response=$(request "$url" "$json" "$id")
   >&2 echo "DEBUG: response $response"
 }
 
