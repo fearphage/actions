@@ -77,9 +77,11 @@ main() {
   >&2 echo "DEBUG: \$json => $json"
 
   # start check
-  response=$(request "$json")
+  response="$(request "$json")"
   >&2 echo "DEBUG: \$response <> $response"
 
+  >&2 echo "DEBUG: before id"
+  exit 0
   id=$(echo "$response" | jq --raw-output .id)
 
   >&2 echo "DEBUG: response: $response / json: $json / id: $id"
@@ -87,7 +89,6 @@ main() {
   if [ -z "$id" ] || [ "$id" = "null" ]; then
     exit 78
   fi
-
 
   >&2 echo "DEBUG: before run_shellcheck"
   exit 0
