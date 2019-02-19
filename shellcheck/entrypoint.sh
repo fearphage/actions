@@ -72,12 +72,14 @@ timestamp() {
 main() {
   >&2 echo "DEBUG: \$GITHUB_ACTION = $GITHUB_ACTION ; \$GITHUB_SHA = $GITHUB_SHA"
 
-  json='{"name":"'"${GITHUB_ACTION}"'","status":"in_progress","started_at":"'"$(timestamp)"'","head_sha": "'"${GITHUB_SHA}"'"}'
+  json='{"name":"'"${GITHUB_ACTION}"'","status":"in_progress","started_at":"'"$(timestamp)"'","head_sha":"'"${GITHUB_SHA}"'"}'
 
   >&2 echo "DEBUG: \$json => $json"
 
   # start check
   response=$(request "$json")
+  >&2 echo "DEBUG: \$response <> $response"
+
   id=$(echo "$response" | jq --raw-output .id)
 
   >&2 echo "DEBUG: response: $response / json: $json / id: $id"
