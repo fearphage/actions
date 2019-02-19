@@ -24,7 +24,7 @@ Filter for merged pull requests only.
 ### Usage
 ```
 # Filter for merged pull requests
-action "Master" {
+action "if merged" {
   uses = "fearphage/actions/github/is-merged@master"
 }
 ```
