@@ -14,6 +14,6 @@ workflow "lint" {
 }
 
 action "lint shell scripts" {
-  uses = "./shellcheck@master"
+  uses = "./shellcheck"
   secrets = ["GITHUB_TOKEN"]
 }
