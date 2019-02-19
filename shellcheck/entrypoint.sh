@@ -13,7 +13,7 @@ if [ -z "$GITHUB_SHA" ]; then
 fi
 
 parse_json() {
-  jq --slurp --arg name "$GITHUB_ACTION" --arg now "$(timestamp)" 'flatten | {
+  jq --slurp --arg name "$GITHUB_ACTION" --arg now "$(timestamp)" '{
     completed_at: $now,
     conclusion: (if map(select(.level == "error")) | length > 0 then "failure" else "success" end),
     output: {
@@ -29,27 +29,29 @@ parse_json() {
         message: .message
       })
     }
-  }'
+  }' "$1"
 }
 
 request() {
-  if [ -n "$3" ]; then
+  url=$(jq --raw-output .repository.url "$GITHUB_EVENT_PATH")
+
+  if [ -n "$2" ]; then
     method='PATCH'
-    suffix="/$3"
+    suffix="/$2"
   else
     method='POST'
     suffix=''
   fi
 
-  >&2 echo "DEBUG: URL $1 ; method $method"
+  >&2 echo "DEBUG: \$url = $url ; \$method = $method ; \$suffix = $suffix"
 
   curl -sSL \
     --request "$method" \
     --header 'Accept: application/vnd.github.antiope-preview+json' \
     --header "Authorization: token ${GITHUB_TOKEN}" \
     --header 'Content-Type: application/json' \
-    --data "$2" \
-    "${1}/check-runs${suffix}"
+    --data "$1" \
+    "${url}/check-runs${suffix}"
 }
 
 run_shellcheck() {
@@ -66,31 +68,31 @@ timestamp() {
 }
 
 main() {
-  action=$(jq --raw-output .action "$GITHUB_EVENT_PATH")
-  url=$(jq --raw-output .repository.url "$GITHUB_EVENT_PATH")
-
-  >&2 echo "DEBUG: PR $action / url $url"
+  >&2 echo "DEBUG: \$GITHUB_ACTION = $GITHUB_ACTION ; \$GITHUB_SHA = $GITHUB_SHA"
 
   json='{"name":"'"${GITHUB_ACTION}"'","status":"in_progress","started_at":"'"$(timestamp)"'","head_sha": "'"${GITHUB_SHA}"'"}'
 
+  >&2 echo "DEBUG: \$json => $json"
+
   # start check
-  response=$(request "$url" "$json")
+  response=$(request "$json")
   id=$(echo "$response" | jq --raw-output .id)
 
-  >&2 echo "DEBUG: response $response / json: $json / id: $id"
+  >&2 echo "DEBUG: response: $response / json: $json / id: $id"
 
   if [ -z "$id" ] || [ "$id" = "null" ]; then
     exit 78
   fi
 
-  results=$(run_shellcheck)
+  results=$(run_shellcheck | jq --slurp flatten)
+  >&2 echo "DEBUG: $results => $results"
   if [ "$(jq --raw-output length "$results")" -eq 0 ]; then
     exit 0
   fi
 
-  json=$(run_shellcheck | parse_json)
+  json=$(parse_json "$results")
   >&2 echo "DEBUG: pre-patch json => $json"
-  response=$(request "$url" "$json" "$id")
+  response=$(request "$json" "$id")
   >&2 echo "DEBUG: response $response"
 }
 
