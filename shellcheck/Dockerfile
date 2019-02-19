@@ -1,6 +1,8 @@
 FROM koalaman/shellcheck-alpine
 
-RUN apk --no-cache add jq
+RUN apk add --no-cache \
+  bash \
+  jq
 
 COPY entrypoint.sh /entrypoint.sh
 
