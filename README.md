@@ -28,6 +28,7 @@ action "Master" {
   uses = "fearphage/actions/github/is-merged@master"
 }
 ```
-### Shellcheck (Coming soon)
+
+## Shellcheck (Coming soon)
 
 Posts [Shellcheck](https://github.com/koalaman/shellcheck) results to [github checks api](https://developer.github.com/v3/checks/)
