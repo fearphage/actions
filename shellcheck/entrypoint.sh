@@ -62,7 +62,7 @@ run_shellcheck() {
   # shellcheck disable=SC2013
   for file in $(grep -IRl "#\!\(/usr/bin/env \|/bin/\)sh" --exclude-dir ".git" --exclude-dir "node_modules" --exclude "*.txt" --exclude "*.sh"); do
     shellcheck --format=json --shell=sh "$file"
-  done) | jq --slurp 'flatten'
+  done) | jq --slurp flatten
 }
 
 timestamp() {
@@ -88,7 +88,7 @@ main() {
     exit 78
   fi
 
-  results=$(run_shellcheck | jq --slurp flatten)
+  results=$(run_shellcheck)
   >&2 echo "DEBUG: $results => $results"
   if [ "$(jq --raw-output length "$results")" -eq 0 ]; then
     exit 0
