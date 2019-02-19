@@ -22,14 +22,14 @@ function main {
   merged=$(json .pull_request.merged)
   ref=$(json .pull_request.head.ref)
 
-  echo "DEBUG: \$action = $action"
-  echo "DEBUG: \$default_branch = $default_branch"
-  echo "DEBUG: \$merged = $merged"
-  echo "DEBUG: \$ref = $ref"
+  >&2 echo "DEBUG: \$action = $action"
+  >&2 echo "DEBUG: \$default_branch = $default_branch"
+  >&2 echo "DEBUG: \$merged = $merged"
+  >&2 echo "DEBUG: \$ref = $ref"
 
   if [ "$action" = "closed" ] && [ "$merged" = "true" ]; then
     if [ "$ref" != "$default_branch" ]; then
-      echo "Deleting branch $ref from $(json .pull_request.head.repo.full_name)"
+      >&2 echo "Deleting branch $ref from $(json .pull_request.head.repo.full_name)"
 
       # curl \
         # --request DELETE \
@@ -41,3 +41,5 @@ function main {
     fi
   fi
 }
+
+main "$@"
