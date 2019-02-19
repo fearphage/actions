@@ -18,7 +18,7 @@ function main {
   local ref
 
   action=$(json .action)
-  default_branch=$(json .base.repo.default_branch)
+  default_branch=$(json .pull_request.base.repo.default_branch)
   merged=$(json .pull_request.merged)
   ref=$(json .pull_request.head.ref)
 
@@ -28,6 +28,11 @@ function main {
   >&2 echo "DEBUG: \$ref = $ref"
 
   if [ "$action" = "closed" ] && [ "$merged" = "true" ]; then
+    if [ "$(json .pull_request.base.repo.full_name)" != "$(json .pull_request.head.repo.full_name)" ]; then
+      >&2 echo "No access to remove branches from $(json .pull_request.head.repo.full_name), exiting."
+      exit 0
+    fi
+
     if [ "$ref" != "$default_branch" ]; then
       >&2 echo "Deleting branch $ref from $(json .pull_request.head.repo.full_name)"
 
