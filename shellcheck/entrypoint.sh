@@ -88,6 +88,10 @@ main() {
     exit 78
   fi
 
+
+  >&2 echo "DEBUG: before run_shellcheck"
+  exit 0
+
   results=$(run_shellcheck)
   >&2 echo "DEBUG: $results => $results"
   if [ "$(jq --raw-output length "$results")" -eq 0 ]; then
