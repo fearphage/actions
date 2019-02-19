@@ -13,7 +13,7 @@ if [ -z "$GITHUB_SHA" ]; then
 fi
 
 parse_json() {
-  jq --slurp --arg name "$GITHUB_ACTION" --arg now "$(timestamp)" '{
+  jq --arg name "$GITHUB_ACTION" --arg now "$(timestamp)" '{
     completed_at: $now,
     conclusion: (if map(select(.level == "error")) | length > 0 then "failure" else "success" end),
     output: {
@@ -45,6 +45,7 @@ request() {
 
   >&2 echo "DEBUG: \$url = $url ; \$method = $method ; \$suffix = $suffix"
 
+  set -x
   curl -sSL \
     --request "$method" \
     --header 'Accept: application/vnd.github.antiope-preview+json' \
@@ -52,6 +53,7 @@ request() {
     --header 'Content-Type: application/json' \
     --data "$1" \
     "${url}/check-runs${suffix}"
+  set +x
 }
 
 run_shellcheck() {
