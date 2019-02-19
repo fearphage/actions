@@ -14,6 +14,7 @@ function main {
   action=$(jq .action "$GITHUB_EVENT_PATH")
   merged=$(jq .pull_request.merged "$GITHUB_EVENT_PATH")
 
+  # https://developer.github.com/v3/activity/events/types/#events-api-payload-28
   if [ "$action" != "closed" ] || [ "$merged" != "true" ]; then
     >&2 "PR status not met - \$action: $action / \$merged: $merged"
     exit 78
