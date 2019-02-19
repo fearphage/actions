@@ -33,7 +33,7 @@ parse_json() {
 }
 
 request() {
-  url=$(jq --raw-output .repository.url "$GITHUB_EVENT_PATH")
+  url="https://api.github.com/repos/$(jq --raw-output .repository.full_name "$GITHUB_EVENT_PATH")/check-runs"
 
   if [ -n "$2" ]; then
     method='PATCH'
@@ -52,7 +52,7 @@ request() {
     --header "Authorization: token ${GITHUB_TOKEN}" \
     --header 'Content-Type: application/json' \
     --data "$1" \
-    "${url}/check-runs${suffix}"
+    "${url}${suffix}"
   set +x
 }
 
