@@ -8,12 +8,14 @@ if [ -z "$GITHUB_EVENT_PATH" ]; then
 fi
 
 function main {
+  local action
   local merged
 
+  action=$(jq .action "$GITHUB_EVENT_PATH")
   merged=$(jq .pull_request.merged "$GITHUB_EVENT_PATH")
 
-  if [ "$merged" != "true" ]; then
-    >&2 "PR status not met: expected: $1 / actual: $merged"
+  if [ "$action" != "closed" ] || [ "$merged" != "true" ]; then
+    >&2 "PR status not met - \$action: $action / \$merged: $merged"
     exit 78
   fi
 }
