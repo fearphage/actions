@@ -7,3 +7,13 @@ action "delete branch" {
   uses = "./github/delete-branch-on-merge"
   secrets = ["GITHUB_TOKEN"]
 }
+
+workflow "lint" {
+  on = "push"
+  resolves = ["lint shell scripts"]
+}
+
+action "lint shell scripts" {
+  uses = "./shellcheck@master"
+  secrets = ["GITHUB_TOKEN"]
+}
