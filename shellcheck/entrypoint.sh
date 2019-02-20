@@ -77,7 +77,6 @@ main() {
 
   >&2 echo "DEBUG: \$json => $json"
 
-  exit 0
   # start check
   response="$(request "$url" "$json")"
   >&2 echo "DEBUG: \$response <> $response"
