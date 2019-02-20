@@ -33,6 +33,9 @@ parse_json() {
 }
 
 request() {
+  local method
+  local suffix
+
   if [ -n "$3" ]; then
     method='PATCH'
     suffix="/$3"
@@ -43,7 +46,7 @@ request() {
 
   >&2 echo "DEBUG: \$url = $url ; \$method = $method ; \$suffix = $suffix"
 
-  curl -sSL \
+  >&2 echo curl -sSL \
     --request "$method" \
     --header 'Accept: application/vnd.github.antiope-preview+json' \
     --header "Authorization: token ${GITHUB_TOKEN}" \
