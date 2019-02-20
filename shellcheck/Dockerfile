@@ -2,6 +2,7 @@ FROM koalaman/shellcheck-alpine
 
 RUN apk add --no-cache \
   bash \
+  ca-certificates \
   curl \
   jq
 

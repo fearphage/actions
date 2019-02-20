@@ -46,7 +46,7 @@ request() {
 
   >&2 echo "DEBUG: \$url = $url ; \$method = $method ; \$suffix = $suffix"
 
-  >&2 echo curl -sSL \
+  curl --location --show-error \
     --request "$method" \
     --header 'Accept: application/vnd.github.antiope-preview+json' \
     --header "Authorization: token ${GITHUB_TOKEN}" \
