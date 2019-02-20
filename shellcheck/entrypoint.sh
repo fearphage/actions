@@ -69,7 +69,6 @@ timestamp() {
 
 main() {
   jq . "$GITHUB_EVENT_PATH"
-  exit 0
 
   url="https://api.github.com/repos/$(jq --raw-output .repository.full_name "$GITHUB_EVENT_PATH")"
   >&2 echo "DEBUG: \$GITHUB_ACTION = $GITHUB_ACTION ; \$GITHUB_SHA = $GITHUB_SHA ; \$url = $url"
@@ -78,6 +77,7 @@ main() {
 
   >&2 echo "DEBUG: \$json => $json"
 
+  exit 0
   # start check
   response="$(request "$url" "$json")"
   >&2 echo "DEBUG: \$response <> $response"
