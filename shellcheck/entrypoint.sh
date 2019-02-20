@@ -43,7 +43,6 @@ request() {
 
   >&2 echo "DEBUG: \$url = $url ; \$method = $method ; \$suffix = $suffix"
 
-  set -x
   curl -sSL \
     --request "$method" \
     --header 'Accept: application/vnd.github.antiope-preview+json' \
@@ -51,7 +50,6 @@ request() {
     --header 'Content-Type: application/json' \
     --data "$2" \
     "${1}/check-runs${suffix}"
-  set +x
 }
 
 run_shellcheck() {
