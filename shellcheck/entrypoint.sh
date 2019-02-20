@@ -46,6 +46,7 @@ request() {
 
   >&2 echo "DEBUG: \$url = $url ; \$method = $method ; \$suffix = $suffix"
 
+  exit 0
   curl --location --show-error \
     --request "$method" \
     --header 'Accept: application/vnd.github.antiope-preview+json' \
