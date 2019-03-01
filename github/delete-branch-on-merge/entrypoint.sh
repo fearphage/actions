@@ -3,7 +3,7 @@
 set -eo pipefail
 
 if [ -z "$GITHUB_TOKEN" ]; then
-  2>& echo 'GITHUB_TOKEN secret is required'
+  >&2 echo 'GITHUB_TOKEN secret is required'
   exit 1
 fi
 
