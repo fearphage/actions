@@ -32,6 +32,8 @@ function main {
       "$(json .pull_request.head.repo.url)/git/refs/heads/$ref"
 
     >&2 echo "Branch deleted successfully!"
+  else
+    exit 78
   fi
 }
 
