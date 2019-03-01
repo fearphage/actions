@@ -14,6 +14,6 @@ workflow "lint shell scripts" {
 }
 
 action "lint scripts" {
-  uses = "fearphage/shellcheck-action@0.0.3-debug9"
+  uses = "fearphage/shellcheck-action@1.0.0"
   secrets = ["GITHUB_TOKEN"]
 }
